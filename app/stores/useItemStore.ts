@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { Item, ListType } from "../types/item";
 
-interface ItemStoreState {
+export interface ItemStoreState {
   mainList: Item[];
   fruit: Item[];
   vegetable: Item[];
@@ -62,32 +62,37 @@ const useItemStore = create<ItemStoreState>((set) => ({
 
   moveItem: (item: Item) =>
     set((state) => {
-        //filter ตัว main list ให้เหลือเฉพาะ ตัวที่ไม่ถูก move
+      //filter ตัว main list ให้เหลือเฉพาะ ตัวที่ไม่ถูก move
       const newMainList = state.mainList.filter((i) => i.name !== item.name);
-      const updatedListType: ListType = item.type.toLowerCase() as ListType; 
+      const updatedListType: ListType = item.type.toLowerCase() as ListType;
       return {
         mainList: newMainList,
-        [updatedListType]: [
-          ...state[updatedListType],
-          { ...item, returned: false },
-        ],
+        [updatedListType]: [...state[updatedListType], { ...item }],
       };
     }),
 
-  returnItem: (item: Item, manualReturn = false) =>
+  returnItem: (item: Item) =>
     set((state) => {
       const updatedListType: ListType = item.type.toLowerCase() as ListType;
       const newList = state[updatedListType].filter(
         (i) => i.name !== item.name
       );
-      return {
-        mainList: [...state.mainList, item],
-        [updatedListType]: manualReturn
-          ? newList
-          : newList.map((i) =>
-              i.name === item.name ? { ...i, returned: true } : i
-            ),
-      };
+
+      // ตรวจสอบว่ามีไอเทมใน mainList อยู่แล้วหรือไม่
+      const itemExistsInMainList = state.mainList.some(
+        (i) => i.name === item.name
+      );
+
+      if (!itemExistsInMainList) {
+        return {
+          mainList: [...state.mainList, item],
+          [updatedListType]: newList,
+        };
+      } else {
+        return {
+          [updatedListType]: newList,
+        };
+      }
     }),
 }));
 
