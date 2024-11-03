@@ -10,6 +10,7 @@ function TodoListPage() {
   const handleMoveItem = (item: Item) => {
     moveItem(item);
 
+    // ในเคสของการที่ทีการรอ 5 วินาทีแล้วคืนของกลับ
     setTimeout(() => {
       const { fruit, vegetable } = useItemStore.getState();
       const itemJustAdd = fruit
