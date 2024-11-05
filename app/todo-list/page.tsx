@@ -34,8 +34,8 @@ function TodoListPage() {
   };
 
   return (
-    <div className="w-screen h-screen">
-      <div className="grid grid-cols-3 gap-4 h-screen p-4">
+    <div className="xl:w-screen xl:h-screen">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-screen p-4">
         <div className="col-span-1 p-4 border-2 border-gray-300 rounded-lg">
           <h2 className="text-lg font-bold mb-4 text-red-500 text-center">Main List</h2>
           <div className="flex flex-col gap-6">
@@ -51,7 +51,7 @@ function TodoListPage() {
           </div>
         </div>
         <div
-          className="col-span-1 h-full border-2 border-green-500 p-4 rounded-lg"
+          className="col-span-1 h-full border-2 border-green-500 p-4 rounded-lg min-h-[500px] xl:min-h-none"
           onClick={() => handleReturnLatestInColumn("fruit")}
         >
           <h2 className="text-lg font-bold mb-4 text-green-500 text-center">Fruits</h2>
@@ -67,7 +67,7 @@ function TodoListPage() {
           </div>
         </div>
         <div
-          className="col-span-1 border-2 border-yellow-500 p-4 rounded-lg"
+          className="col-span-1 border-2 border-yellow-500 p-4 rounded-lg min-h-[500px] xl:min-h-none"
           onClick={() => handleReturnLatestInColumn("vegetable")}
         >
           <h2 className="text-lg font-bold mb-4 text-yellow-500 text-center">Vegetables</h2>
