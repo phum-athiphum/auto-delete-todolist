@@ -10,27 +10,19 @@ function TodoListPage() {
   const handleMoveItem = (item: Item) => {
     moveItem(item);
 
+    // ตั้งเวลา 5 วินาที ถ้าไอเท็มยังอยู่ที่เดิม จะคืนค่ากลับไปที่ mainList
     setTimeout(() => {
       const { fruit, vegetable } = useItemStore.getState();
-      const itemJustAdd = fruit
-        .concat(vegetable)
-        .find((i) => {
-          return i.name === item.name;
-        });
-      if (itemJustAdd) {
+      const isStillInList = [...fruit, ...vegetable].some((i) => i.name === item.name);
+
+      if (isStillInList) {
         returnItem(item);
       }
     }, 5000);
   };
 
-  // Function to return the latest item in the column
-  const handleReturnLatestInColumn = (itemType: ListType) => {
-    const items = itemType === "fruit" ? fruit : vegetable;
-
-    if (items.length > 0) {
-      const latestItem = items[items.length - 1];
-      returnItem(latestItem, true);
-    }
+  const handleReturnItem = (item: Item) => {
+    returnItem(item, true);
   };
 
   return (
@@ -52,13 +44,13 @@ function TodoListPage() {
         </div>
         <div
           className="col-span-1 h-full border-2 border-green-500 p-4 rounded-lg min-h-[500px] xl:min-h-none"
-          onClick={() => handleReturnLatestInColumn("fruit")}
         >
           <h2 className="text-lg font-bold mb-4 text-green-500 text-center">Fruits</h2>
           <div className="space-y-2 cursor-pointer ">
             {fruit.map((item) => (
               <div
                 key={item.name}
+                onClick={() => handleReturnItem(item)}
                 className="bg-green-100 text-green-700 px-4 py-2 rounded shadow"
               >
                 {item.name}
@@ -68,13 +60,13 @@ function TodoListPage() {
         </div>
         <div
           className="col-span-1 border-2 border-yellow-500 p-4 rounded-lg min-h-[500px] xl:min-h-none"
-          onClick={() => handleReturnLatestInColumn("vegetable")}
         >
           <h2 className="text-lg font-bold mb-4 text-yellow-500 text-center">Vegetables</h2>
           <div className="space-y-2 cursor-pointer">
             {vegetable.map((item) => (
               <div
                 key={item.name}
+                onClick={() => handleReturnItem(item)}
                 className="bg-yellow-100 text-yellow-700 px-4 py-2 rounded shadow"
               >
                 {item.name}
