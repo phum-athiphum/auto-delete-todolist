@@ -1,28 +1,44 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import useItemStore from "@/app/stores/useItemStore";
-import { Item, ListType } from "@/app/types/item";
+import { Item } from "@/app/types/item";
 
 function TodoListPage() {
   const { mainList, fruit, vegetable, moveItem, returnItem } = useItemStore();
 
-  const handleMoveItem = (item: Item) => {
+   // ใช้ useRef เก็บ timeout สำหรับแต่ละไอเท็ม
+   const timeoutRef = useRef<{ [key: string]: NodeJS.Timeout }>({});
+
+   const handleMoveItem = (item: Item) => {
     moveItem(item);
 
+    // ถ้ามี timeout ค้างอยู่ ให้ลบออกก่อน (ป้องกันซ้อนกัน)
+    if (timeoutRef.current[item.name]) {
+      clearTimeout(timeoutRef.current[item.name]);
+      delete timeoutRef.current[item.name];
+    }
+
     // ตั้งเวลา 5 วินาที ถ้าไอเท็มยังอยู่ที่เดิม จะคืนค่ากลับไปที่ mainList
-    setTimeout(() => {
+    timeoutRef.current[item.name] = setTimeout(() => {
       const { fruit, vegetable } = useItemStore.getState();
       const isStillInList = [...fruit, ...vegetable].some((i) => i.name === item.name);
 
       if (isStillInList) {
         returnItem(item);
       }
+      delete timeoutRef.current[item.name]; // ลบออกเมื่อ timeout ทำงานเสร็จ
     }, 5000);
   };
 
   const handleReturnItem = (item: Item) => {
     returnItem(item, true);
+
+    // ถ้ามี timeout ค้างอยู่ ให้ลบออก
+    if (timeoutRef.current[item.name]) {
+      clearTimeout(timeoutRef.current[item.name]);
+      delete timeoutRef.current[item.name];
+    }
   };
 
   return (
